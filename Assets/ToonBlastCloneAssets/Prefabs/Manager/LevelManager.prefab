@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &9149465352445676251
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9149465352445676253}
+  - component: {fileID: 9149465352445676252}
+  m_Layer: 0
+  m_Name: LevelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9149465352445676253
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9149465352445676251}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9149465352445676252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9149465352445676251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ea14002a6376c84da9f1e62a2f057f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gridSize: {x: 12, y: 10}
+  panelPrefab: {fileID: 5107309309140179368, guid: ad217a243b9f3ed41aaddc3a778d54e8, type: 3}
+  isOverlap: 1
+  overlapOffset: {x: -6, y: -6}
+  cubePrefabList:
+    NormalCubePref: {fileID: 1224317946294091711, guid: 08e16a0797bf5ac4781d95f5d8308152, type: 3}
+    VerticalBombCubePref: {fileID: 0}
+    HorizontalBombCubePref: {fileID: 0}
+    SqureBombCubePref: {fileID: 0}
+    DiscoCubePref: {fileID: 0}
+  maxCubeColors: 4
+  colors:
+  - {r: 1, g: 1, b: 1, a: 1}
+  - {r: 1, g: 0.514151, b: 0.514151, a: 1}
+  - {r: 0.5329197, g: 1, b: 0.495283, a: 1}
+  - {r: 0.3443396, g: 0.6821866, b: 1, a: 1}
+  - {r: 1, g: 0.9642977, b: 0.4764151, a: 1}

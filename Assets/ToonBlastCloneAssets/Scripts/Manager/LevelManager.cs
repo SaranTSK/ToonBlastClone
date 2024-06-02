@@ -4,6 +4,16 @@ using UnityEngine;
 
 namespace ToonBlast
 {
+    [System.Serializable]
+    public class CubePrefabList
+    {
+        public GameObject NormalCubePref;
+        public GameObject VerticalBombCubePref;
+        public GameObject HorizontalBombCubePref;
+        public GameObject SqureBombCubePref;
+        public GameObject DiscoCubePref;
+    }
+
     public class LevelManager : MonoBehaviour
     {
         public static LevelManager Instance;
@@ -18,6 +28,12 @@ namespace ToonBlast
         [SerializeField] private GameObject panelPrefab;
         [SerializeField] private bool isOverlap;
         [SerializeField] private Vector2 overlapOffset;
+        [Header("Cube Setting")]
+        [SerializeField] private CubePrefabList cubePrefabList;
+        [SerializeField] [Range(0,4)] private int maxCubeColors;
+        [SerializeField] private Color[] colors;
+
+        private GameObject[,] gridArray;
 
         private void Awake()
         {
@@ -32,9 +48,15 @@ namespace ToonBlast
             SpawnGrid();
         }
 
+        public Color GetColor(int cubeColor)
+        {
+            return colors[cubeColor];
+        }
+
         private void SpawnGrid()
         {
             Debug.Log($"Row: {gridSize.x} | Column: {gridSize.y}");
+            gridArray = new GameObject[gridSize.x, gridSize.y];
 
             GameObject parent = new GameObject("PanelParent");
 
@@ -58,6 +80,8 @@ namespace ToonBlast
                     
                     GameObject go = Instantiate(panelPrefab, position, Quaternion.identity, parent.transform);
                     go.name = $"Panel({x},{y})";
+                    go.GetComponent<CubePanel>().Init(new CubeIndex(x, y));
+                    gridArray[x, y] = go;
                 }
             }
 
@@ -71,6 +95,58 @@ namespace ToonBlast
 
             parent.transform.position = center;
             CameraManager.Instance.ZoomCameraFollowGridSize(gridSize);
+            SpawnCube();
+        }
+
+        private void SpawnCube()
+        {
+            for (int x = 0; x < gridArray.GetLength(0); x++)
+            {
+                for (int y = 0; y < gridArray.GetLength(1); y++)
+                {
+                    //TODO: Spawn cube object
+                    NormalCube cube = Instantiate(cubePrefabList.NormalCubePref, gridArray[x, y].transform).GetComponent<NormalCube>();
+                    cube.Init(Random.Range(1, maxCubeColors));
+                }
+            }
+        }
+
+        #region Cube Action
+        public void ClickNormalCube(CubeIndex index, int color)
+        {
+
+        }
+
+        public void ClickVerticalBombCube(CubeIndex index)
+        {
+
+        }
+
+        public void ClickHorizontalBombCube(CubeIndex index)
+        {
+
+        }
+
+        public void ClickSqureBombCube(CubeIndex index, int xRange = 1, int yRange = 1)
+        {
+
+        }
+
+        public void ClickDiscoCubeCube(int color)
+        {
+            for (int x = 0; x < gridArray.GetLength(0); x++)
+            {
+                for (int y = 0; y < gridArray.GetLength(1); y++)
+                {
+                    
+                }
+            }
+        }
+        #endregion
+
+        private void CheckCollideCube(int x, int y, int color)
+        {
+
         }
     }
 }
