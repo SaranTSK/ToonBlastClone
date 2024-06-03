@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,5 +15,10 @@ namespace ToonBlast
         public abstract void Init(int cubeColor);
         public abstract void Click(CubeIndex index);
         public abstract void Remove();
+
+        public virtual void Drop(Vector2 position, float time)
+        {
+            transform.DOMove(position, time);
+        }
     }
 }

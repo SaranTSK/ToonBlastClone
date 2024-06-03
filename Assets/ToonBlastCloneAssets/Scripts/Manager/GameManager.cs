@@ -4,9 +4,19 @@ using UnityEngine;
 
 namespace ToonBlast
 {
+    public enum GameplayState
+    {
+        Idle = 0,
+        Check = 1,
+        Spawn = 2,
+    }
+
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance;
+
+        public GameplayState GameplayState { get => gameplayState; }
+        private GameplayState gameplayState;
 
         private void Awake()
         {
@@ -16,9 +26,20 @@ namespace ToonBlast
             }
         }
 
+        private void Start()
+        {
+            ChangeState(GameplayState.Idle);
+        }
+
         private void Update()
         {
             UpdateMouseInput();
+        }
+
+        public void ChangeState(GameplayState gameplayState)
+        {
+            Debug.Log($"Change state from [{this.gameplayState}] to [{gameplayState}]");
+            this.gameplayState = gameplayState;
         }
 
         private void UpdateMouseInput()
@@ -40,9 +61,12 @@ namespace ToonBlast
 
             if (hit.collider != null)
             {
-                if(hit.collider.TryGetComponent(out CubePanel cubePanel))
+                if(GameplayState == GameplayState.Idle)
                 {
-                    cubePanel.Click();
+                    if (hit.collider.TryGetComponent(out CubePanel cubePanel))
+                    {
+                        cubePanel.Click();
+                    }
                 }
             }
         }

@@ -47,16 +47,11 @@ MonoBehaviour:
   panelPrefab: {fileID: 5107309309140179368, guid: ad217a243b9f3ed41aaddc3a778d54e8, type: 3}
   isOverlap: 1
   overlapOffset: {x: -6, y: -6}
-  cubePrefabList:
-    NormalCubePref: {fileID: 1224317946294091711, guid: 08e16a0797bf5ac4781d95f5d8308152, type: 3}
-    VerticalBombCubePref: {fileID: 0}
-    HorizontalBombCubePref: {fileID: 0}
-    SqureBombCubePref: {fileID: 0}
-    DiscoCubePref: {fileID: 0}
-  maxCubeColors: 4
   colors:
   - {r: 1, g: 1, b: 1, a: 1}
   - {r: 1, g: 0.514151, b: 0.514151, a: 1}
   - {r: 0.5329197, g: 1, b: 0.495283, a: 1}
   - {r: 0.3443396, g: 0.6821866, b: 1, a: 1}
   - {r: 1, g: 0.9642977, b: 0.4764151, a: 1}
+  dropOffset: {x: 0, y: 0}
+  dropTime: 1

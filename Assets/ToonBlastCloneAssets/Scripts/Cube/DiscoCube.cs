@@ -18,7 +18,7 @@ namespace ToonBlast
 
         public override void Click(CubeIndex index)
         {
-            LevelManager.Instance.ClickDiscoCubeCube(cubeColor);
+            LevelManager.Instance.ClickDiscoCubeCube(index, cubeColor);
         }
 
         public override void Remove()

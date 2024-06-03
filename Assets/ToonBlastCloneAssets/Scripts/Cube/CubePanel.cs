@@ -18,6 +18,7 @@ namespace ToonBlast
 
     public class CubePanel : MonoBehaviour
     {
+        public CubeIndex Index { get => index; }
         private CubeIndex index;
 
         public void Init(CubeIndex index)
@@ -31,6 +32,7 @@ namespace ToonBlast
             if (GetCube() == null)
                 return;
 
+            GameManager.Instance.ChangeState(GameplayState.Check);
             GetCube().Click(index);
         }
 
