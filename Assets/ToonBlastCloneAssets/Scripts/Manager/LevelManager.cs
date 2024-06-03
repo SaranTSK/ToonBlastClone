@@ -19,7 +19,6 @@ namespace ToonBlast
         [SerializeField] private bool isOverlap;
         [SerializeField] private Vector2 overlapOffset;
         [Header("Cube Setting")]
-        [SerializeField] [Range(0,4)] private int maxCubeColors;
         [SerializeField] private Color[] colors;
 
         private CubePanel[,] gridArray;
@@ -39,10 +38,7 @@ namespace ToonBlast
 
         private void Update()
         {
-            if(Input.GetKeyDown(KeyCode.R))
-            {
-                ResetCubes();
-            }
+            
         }
 
         public Color GetColor(int cubeColor)
@@ -110,13 +106,13 @@ namespace ToonBlast
         #region Cube Spawning
         private void SpawnNormalCube()
         {
-            for (int x = 0; x < gridArray.GetLength(0); x++)
+            for (int x = 0; x < gridSize.x; x++)
             {
-                for (int y = 0; y < gridArray.GetLength(1); y++)
+                for (int y = 0; y < gridSize.y; y++)
                 {
                     CubePanel panel = gridArray[x, y];
                     GameObject cube = ObjectPoolManager.Instance.SpawnFromPool(PoolTag.NormalCube, panel.transform.position, Quaternion.identity, panel.transform);
-                    cube.GetComponent<NormalCube>().Init(Random.Range(1, maxCubeColors));
+                    cube.GetComponent<NormalCube>().Init(Random.Range(1, colors.Length));
                 }
             }
         }
@@ -125,6 +121,11 @@ namespace ToonBlast
         {
             CubePanel panel = gridArray[index.x, index.y];
             GameObject cube = ObjectPoolManager.Instance.SpawnFromPool(tag, panel.transform.position, Quaternion.identity, panel.transform);
+            
+            if(tag == PoolTag.DiscoCube)
+            {
+                cube.GetComponent<DiscoCube>().Init(color);
+            }
         }
         #endregion
 
@@ -141,7 +142,6 @@ namespace ToonBlast
                 CheckCollideCube(current, color);
             }
 
-            Debug.Log($"Cube[{color}] amount: {cubes.Count}");
             int amount = cubes.Count;
             if (amount > 1)
             {
@@ -156,17 +156,70 @@ namespace ToonBlast
 
         public void ClickVerticalBombCube(CubeIndex index)
         {
+            for(int y = 0; y < gridSize.y; y++)
+            {
+                CubePanel panel = gridArray[index.x, y];
 
+                if (panel.GetCube() == null)
+                    continue;
+
+                if (panel.GetCube().IsNormalCube || panel.IsEqualIndex(index))
+                {
+                    panel.GetCube().Remove();
+                }
+                else
+                {
+                    panel.GetCube().Click(new CubeIndex(index.x, y));
+                }
+            }
         }
 
         public void ClickHorizontalBombCube(CubeIndex index)
         {
+            for (int x = 0; x < gridSize.x; x++)
+            {
+                CubePanel panel = gridArray[x, index.y];
 
+                if (panel.GetCube() == null)
+                    continue;
+
+                if (panel.GetCube().IsNormalCube || panel.IsEqualIndex(index))
+                {
+                    panel.GetCube().Remove();
+                }
+                else
+                {
+                    panel.GetCube().Click(new CubeIndex(x, index.y));
+                }
+            }
         }
 
         public void ClickSqureBombCube(CubeIndex index, int range)
         {
+            int xMin = (index.x - range < 0) ? 0 : index.x - range;
+            int xMax = (index.x + range > gridSize.x) ? gridSize.x : index.x + range + 1;
+            int yMin = (index.y - range < 0) ? 0 : index.y - range;
+            int yMax = (index.y + range > gridSize.y) ? gridSize.y : index.y + range + 1;
 
+            for (int x = xMin; x < xMax; x++)
+            {
+                for (int y = yMin; y < yMax; y++)
+                {
+                    CubePanel panel = gridArray[x, y];
+
+                    if (panel.GetCube() == null)
+                        continue;
+
+                    if (panel.GetCube().IsNormalCube || panel.IsEqualIndex(index))
+                    {
+                        panel.GetCube().Remove();
+                    }
+                    else
+                    {
+                        panel.GetCube().Click(new CubeIndex(x, y));
+                    }
+                }
+            }
         }
 
         public void ClickDiscoCubeCube(int color)
@@ -311,7 +364,7 @@ namespace ToonBlast
             }
             else if (amount >= 4)
             {
-                int rand = Random.Range(0, 1);
+                int rand = Random.Range(0, 2);
                 if (rand == 0)
                     SpawnSpecialCube(PoolTag.VerticalBombCube, index);
                 else

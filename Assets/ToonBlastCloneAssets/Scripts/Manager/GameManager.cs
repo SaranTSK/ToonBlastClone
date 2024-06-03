@@ -27,6 +27,11 @@ namespace ToonBlast
             {
                 CheckRaycast();
             }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                LevelManager.Instance.ResetCubes();
+            }
         }
 
         private void CheckRaycast()

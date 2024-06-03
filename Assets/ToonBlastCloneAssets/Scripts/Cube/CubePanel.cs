@@ -28,6 +28,9 @@ namespace ToonBlast
         public void Click()
         {
             Debug.Log($"Click on: {name}");
+            if (GetCube() == null)
+                return;
+
             GetCube().Click(index);
         }
 
@@ -37,6 +40,11 @@ namespace ToonBlast
                 return null;
 
             return transform.GetChild(0).GetComponent<AbstractCube>();
+        }
+
+        public bool IsEqualIndex(CubeIndex index) 
+        {
+            return this.index.x == index.x && this.index.y == index.y;
         }
     }
 }
