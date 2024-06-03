@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8360570692825427285
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8360570692825427287}
+  - component: {fileID: 8360570692825427284}
+  m_Layer: 0
+  m_Name: ObjectPoolManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8360570692825427287
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8360570692825427285}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8360570692825427284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8360570692825427285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1d0da46b2d655c418db47c47048c7a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pools:
+  - tag: NormalCube
+    prefab: {fileID: 1224317946294091711, guid: 08e16a0797bf5ac4781d95f5d8308152, type: 3}
+    size: 50
+  - tag: VerticalBombCube
+    prefab: {fileID: 9187236730269009191, guid: fe38cb30abebce24b986a42d2703d0a3, type: 3}
+    size: 10
+  - tag: HorizontalBombCube
+    prefab: {fileID: 8346609526854445751, guid: 509f57bb3531a9f4b9b74112f5149d0d, type: 3}
+    size: 10
+  - tag: SqureBombCube
+    prefab: {fileID: 6849038657337974785, guid: ff2c1dbfe08bfc040b26de911ccb809a, type: 3}
+    size: 5
+  - tag: DiscoCube
+    prefab: {fileID: 6681584879283232733, guid: 17f94521686a22148b8c2dce55406ad5, type: 3}
+    size: 5

@@ -33,6 +33,9 @@ namespace ToonBlast
 
         public AbstractCube GetCube()
         {
+            if(transform.childCount == 0)
+                return null;
+
             return transform.GetChild(0).GetComponent<AbstractCube>();
         }
     }

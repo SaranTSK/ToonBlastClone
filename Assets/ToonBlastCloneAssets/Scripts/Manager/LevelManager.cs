@@ -4,16 +4,6 @@ using UnityEngine;
 
 namespace ToonBlast
 {
-    [System.Serializable]
-    public class CubePrefabList
-    {
-        public GameObject NormalCubePref;
-        public GameObject VerticalBombCubePref;
-        public GameObject HorizontalBombCubePref;
-        public GameObject SqureBombCubePref;
-        public GameObject DiscoCubePref;
-    }
-
     public class LevelManager : MonoBehaviour
     {
         public static LevelManager Instance;
@@ -29,7 +19,6 @@ namespace ToonBlast
         [SerializeField] private bool isOverlap;
         [SerializeField] private Vector2 overlapOffset;
         [Header("Cube Setting")]
-        [SerializeField] private CubePrefabList cubePrefabList;
         [SerializeField] [Range(0,4)] private int maxCubeColors;
         [SerializeField] private Color[] colors;
 
@@ -101,29 +90,43 @@ namespace ToonBlast
 
             transform.position = center;
             CameraManager.Instance.ZoomCameraFollowGridSize(gridSize);
-            SpawnCube();
+            SpawnNormalCube();
         }
 
         public void ResetCubes()
         {
             foreach(Transform child in transform)
             {
-                child.GetComponent<CubePanel>().GetCube().Init(Random.Range(1, maxCubeColors));
+                AbstractCube cube = child.GetComponent<CubePanel>().GetCube();
+                if(cube != null)
+                {
+                    cube.Remove();
+                }
             }
+
+            SpawnNormalCube();
         }
 
-        private void SpawnCube()
+        #region Cube Spawning
+        private void SpawnNormalCube()
         {
             for (int x = 0; x < gridArray.GetLength(0); x++)
             {
                 for (int y = 0; y < gridArray.GetLength(1); y++)
                 {
-                    //TODO: Spawn cube object
-                    NormalCube cube = Instantiate(cubePrefabList.NormalCubePref, gridArray[x, y].transform).GetComponent<NormalCube>();
-                    cube.Init(Random.Range(1, maxCubeColors));
+                    CubePanel panel = gridArray[x, y];
+                    GameObject cube = ObjectPoolManager.Instance.SpawnFromPool(PoolTag.NormalCube, panel.transform.position, Quaternion.identity, panel.transform);
+                    cube.GetComponent<NormalCube>().Init(Random.Range(1, maxCubeColors));
                 }
             }
         }
+
+        private void SpawnSpecialCube(string tag, CubeIndex index, int color = 0)
+        {
+            CubePanel panel = gridArray[index.x, index.y];
+            GameObject cube = ObjectPoolManager.Instance.SpawnFromPool(tag, panel.transform.position, Quaternion.identity, panel.transform);
+        }
+        #endregion
 
         #region Cube Action
         public void ClickNormalCube(CubeIndex index, int color)
@@ -139,12 +142,15 @@ namespace ToonBlast
             }
 
             Debug.Log($"Cube[{color}] amount: {cubes.Count}");
-            if(cubes.Count > 1)
+            int amount = cubes.Count;
+            if (amount > 1)
             {
                 foreach (CubePanel cube in cubes)
                 {
                     cube.GetCube().Remove();
                 }
+
+                CheckSpecialCubeSpawn(index, amount, color);
             }
         }
 
@@ -158,7 +164,7 @@ namespace ToonBlast
 
         }
 
-        public void ClickSqureBombCube(CubeIndex index, int xRange = 1, int yRange = 1)
+        public void ClickSqureBombCube(CubeIndex index, int range)
         {
 
         }
@@ -169,17 +175,31 @@ namespace ToonBlast
             {
                 for (int y = 0; y < gridArray.GetLength(1); y++)
                 {
-                    
+                    if (IsColorMatch(new CubeIndex(x, y), color))
+                    {
+                        gridArray[x, y].GetCube().Remove();
+                    }
                 }
             }
         }
         #endregion
 
+        #region Cube Checker
         private List<CubePanel> cubes = new List<CubePanel>();
         private Queue<CubeIndex> queue = new Queue<CubeIndex>();
         private void CheckCollideCube(CubeIndex index, int color)
         {
             Debug.Log($"Check Index[{index.x},{index.y}]");
+
+            // Add origin index
+            if (!cubes.Contains(gridArray[index.x, index.y]))
+            {
+                cubes.Add(gridArray[index.x, index.y]);
+            }
+            else
+            {
+                Debug.LogWarning($"Self cube [{index.x} , {index.y}] is in list");
+            }
 
             CubeIndex targetIndex = new CubeIndex();
             // Check Left Cube
@@ -269,16 +289,6 @@ namespace ToonBlast
                     Debug.LogWarning($"Down cube [{targetIndex.x} , {targetIndex.y}] is in list");
                 }
             }
-
-            // Add origin index
-            if (!cubes.Contains(gridArray[index.x, index.y]))
-            {
-                cubes.Add(gridArray[index.x, index.y]);
-            }
-            else
-            {
-                Debug.LogWarning($"Self cube [{index.x} , {index.y}] is in list");
-            }
         }
 
         private bool IsColorMatch(CubeIndex index, int color)
@@ -288,5 +298,26 @@ namespace ToonBlast
 
             return gridArray[index.x, index.y].GetCube().CubeColor == color;
         }
+
+        private void CheckSpecialCubeSpawn(CubeIndex index, int amount, int color)
+        {
+            if(amount >= 10)
+            {
+                SpawnSpecialCube(PoolTag.DiscoCube, index, color);
+            }
+            else if(amount >= 6)
+            {
+                SpawnSpecialCube(PoolTag.SqureBombCube, index);
+            }
+            else if (amount >= 4)
+            {
+                int rand = Random.Range(0, 1);
+                if (rand == 0)
+                    SpawnSpecialCube(PoolTag.VerticalBombCube, index);
+                else
+                    SpawnSpecialCube(PoolTag.HorizontalBombCube, index);
+            }
+        }
+        #endregion
     }
 }

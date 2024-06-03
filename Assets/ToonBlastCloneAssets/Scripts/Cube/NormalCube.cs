@@ -14,7 +14,6 @@ namespace ToonBlast
         {
             this.cubeColor = cubeColor;
 
-            gameObject.SetActive(true);
             imageRenderer.color = LevelManager.Instance.GetColor(cubeColor);
             iconRenderer.sprite = null;
             //iconRenderer.color = LevelManager.Instance.GetColor(cubeColor) - new Color(0.25f, 0.25f, 0.25f);
@@ -28,7 +27,7 @@ namespace ToonBlast
         public override void Remove()
         {
             // TODO: Return pool
-            gameObject.SetActive(false);
+            ObjectPoolManager.Instance.ReturnToPool(PoolTag.NormalCube, gameObject);
         }
     }
 }
