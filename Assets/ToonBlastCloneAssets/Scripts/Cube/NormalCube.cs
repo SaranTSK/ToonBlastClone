@@ -10,8 +10,6 @@ namespace ToonBlast
         [SerializeField] private SpriteRenderer imageRenderer;
         [SerializeField] private SpriteRenderer iconRenderer;
 
-        private int cubeColor;
-
         public override void Init(int cubeColor)
         {
             this.cubeColor = cubeColor;
@@ -26,5 +24,10 @@ namespace ToonBlast
             LevelManager.Instance.ClickNormalCube(index, cubeColor);
         }
 
+        public override void Remove()
+        {
+            // TODO: Return pool
+            gameObject.SetActive(false);
+        }
     }
 }

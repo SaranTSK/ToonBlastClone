@@ -9,10 +9,10 @@ namespace ToonBlast
         public int x;
         public int y;
 
-        public CubeIndex(int x, int y)
+        public CubeIndex(int x = 0, int y = 0)
         {
-            this.x = 0;
-            this.y = 0;
+            this.x = x;
+            this.y = y;
         }
     }
 
@@ -28,8 +28,12 @@ namespace ToonBlast
         public void Click()
         {
             Debug.Log($"Click on: {name}");
-            AbstractCube cube = GetComponentInChildren<AbstractCube>();
-            cube.Click(index);
+            GetCube().Click(index);
+        }
+
+        public AbstractCube GetCube()
+        {
+            return GetComponentInChildren<AbstractCube>();
         }
     }
 }

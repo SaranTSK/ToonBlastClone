@@ -24,7 +24,10 @@ namespace ToonBlast
 
     public abstract class AbstractCube : MonoBehaviour
     {
+        public int CubeColor { get => cubeColor; }
+        protected int cubeColor;
         public abstract void Init(int cubeColor);
         public abstract void Click(CubeIndex index);
+        public abstract void Remove();
     }
 }

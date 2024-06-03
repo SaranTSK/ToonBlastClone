@@ -33,7 +33,7 @@ namespace ToonBlast
         [SerializeField] [Range(0,4)] private int maxCubeColors;
         [SerializeField] private Color[] colors;
 
-        private GameObject[,] gridArray;
+        private CubePanel[,] gridArray;
 
         private void Awake()
         {
@@ -48,6 +48,14 @@ namespace ToonBlast
             SpawnGrid();
         }
 
+        private void Update()
+        {
+            if(Input.GetKeyDown(KeyCode.R))
+            {
+                ResetCubes();
+            }
+        }
+
         public Color GetColor(int cubeColor)
         {
             return colors[cubeColor];
@@ -56,9 +64,7 @@ namespace ToonBlast
         private void SpawnGrid()
         {
             Debug.Log($"Row: {gridSize.x} | Column: {gridSize.y}");
-            gridArray = new GameObject[gridSize.x, gridSize.y];
-
-            GameObject parent = new GameObject("PanelParent");
+            gridArray = new CubePanel[gridSize.x, gridSize.y];
 
             SpriteRenderer sr = panelPrefab.GetComponent<SpriteRenderer>();
             Vector3 size = sr.bounds.size;
@@ -78,10 +84,10 @@ namespace ToonBlast
                         position.y += overlap.y * y;
                     }
                     
-                    GameObject go = Instantiate(panelPrefab, position, Quaternion.identity, parent.transform);
+                    GameObject go = Instantiate(panelPrefab, position, Quaternion.identity, transform);
                     go.name = $"Panel({x},{y})";
                     go.GetComponent<CubePanel>().Init(new CubeIndex(x, y));
-                    gridArray[x, y] = go;
+                    gridArray[x, y] = go.GetComponent<CubePanel>();
                 }
             }
 
@@ -93,8 +99,18 @@ namespace ToonBlast
                 center.y += overlap.y / 2;
             }
 
-            parent.transform.position = center;
+            transform.position = center;
             CameraManager.Instance.ZoomCameraFollowGridSize(gridSize);
+            SpawnCube();
+        }
+
+        public void ResetCubes()
+        {
+            foreach(Transform child in transform)
+            {
+                Destroy(child.GetComponent<CubePanel>().GetCube().gameObject);
+            }
+
             SpawnCube();
         }
 
@@ -114,7 +130,24 @@ namespace ToonBlast
         #region Cube Action
         public void ClickNormalCube(CubeIndex index, int color)
         {
+            cubes.Clear();
+            queue.Clear();
+            queue.Enqueue(index);
 
+            while (queue.Count > 0)
+            {
+                CubeIndex current = queue.Dequeue();
+                CheckCollideCube(current, color);
+            }
+
+            Debug.Log($"Cube[{color}] amount: {cubes.Count}");
+            if(cubes.Count > 1)
+            {
+                foreach (CubePanel cube in cubes)
+                {
+                    cube.GetCube().Remove();
+                }
+            }
         }
 
         public void ClickVerticalBombCube(CubeIndex index)
@@ -144,9 +177,107 @@ namespace ToonBlast
         }
         #endregion
 
-        private void CheckCollideCube(int x, int y, int color)
+        private List<CubePanel> cubes = new List<CubePanel>();
+        private Queue<CubeIndex> queue = new Queue<CubeIndex>();
+        private void CheckCollideCube(CubeIndex index, int color)
         {
+            Debug.Log($"Check Index[{index.x},{index.y}]");
 
+            CubeIndex targetIndex = new CubeIndex();
+            // Check Left Cube
+            if (index.x - 1 >= 0)
+            {
+                if (!cubes.Contains(gridArray[index.x - 1, index.y]))
+                {
+                    targetIndex = new CubeIndex(index.x - 1, index.y);
+                    if (IsColorMatch(targetIndex, color))
+                    {
+                        queue.Enqueue(targetIndex);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Left cube [{targetIndex.x},{targetIndex.y}] doesn't match");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"Left cube [{targetIndex.x},{targetIndex.y}] is in list");
+                }
+            }
+
+            // Check Right Cube
+            if (index.x + 1 < gridSize.x)
+            {
+                if (!cubes.Contains(gridArray[index.x + 1, index.y]))
+                {
+                    targetIndex = new CubeIndex(index.x + 1, index.y);
+                    if (IsColorMatch(targetIndex, color))
+                    {
+                        queue.Enqueue(targetIndex);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Right cube [{targetIndex.x},{targetIndex.y}] doesn't match");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"Right cube [{targetIndex.x} , {targetIndex.y}] is in list");
+                }
+            }
+
+            // Check Top Cube
+            if (index.y - 1 >= 0)
+            {
+                if (!cubes.Contains(gridArray[index.x, index.y - 1]))
+                {
+                    targetIndex = new CubeIndex(index.x, index.y - 1);
+                    if (IsColorMatch(targetIndex, color))
+                    {
+                        queue.Enqueue(targetIndex);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Top cube [{targetIndex.x} , {targetIndex.y}] doesn't match");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"Top cube [{targetIndex.x} , {targetIndex.y}] is in list");
+                }
+            }
+
+            // Check Down Cube
+            if (index.y + 1 < gridSize.y)
+            {
+                if (!cubes.Contains(gridArray[index.x, index.y + 1]))
+                {
+                    targetIndex = new CubeIndex(index.x, index.y + 1);
+                    if (IsColorMatch(targetIndex, color))
+                    {
+                        queue.Enqueue(targetIndex);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Down cube [{targetIndex.x} , {targetIndex.y}] doesn't match");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning($"Down cube [{targetIndex.x} , {targetIndex.y}] is in list");
+                }
+            }
+
+            // Add origin index
+            cubes.Add(gridArray[index.x, index.y]);
+        }
+
+        private bool IsColorMatch(CubeIndex index, int color)
+        {
+            if(gridArray[index.x, index.y].GetCube() == null)
+                return false;
+
+            return gridArray[index.x, index.y].GetCube().CubeColor == color;
         }
     }
 }
