@@ -108,10 +108,8 @@ namespace ToonBlast
         {
             foreach(Transform child in transform)
             {
-                Destroy(child.GetComponent<CubePanel>().GetCube().gameObject);
+                child.GetComponent<CubePanel>().GetCube().Init(Random.Range(1, maxCubeColors));
             }
-
-            SpawnCube();
         }
 
         private void SpawnCube()
@@ -192,6 +190,7 @@ namespace ToonBlast
                     targetIndex = new CubeIndex(index.x - 1, index.y);
                     if (IsColorMatch(targetIndex, color))
                     {
+                        cubes.Add(gridArray[index.x - 1, index.y]);
                         queue.Enqueue(targetIndex);
                     }
                     else
@@ -213,6 +212,7 @@ namespace ToonBlast
                     targetIndex = new CubeIndex(index.x + 1, index.y);
                     if (IsColorMatch(targetIndex, color))
                     {
+                        cubes.Add(gridArray[index.x + 1, index.y]);
                         queue.Enqueue(targetIndex);
                     }
                     else
@@ -234,6 +234,7 @@ namespace ToonBlast
                     targetIndex = new CubeIndex(index.x, index.y - 1);
                     if (IsColorMatch(targetIndex, color))
                     {
+                        cubes.Add(gridArray[index.x, index.y - 1]);
                         queue.Enqueue(targetIndex);
                     }
                     else
@@ -255,6 +256,7 @@ namespace ToonBlast
                     targetIndex = new CubeIndex(index.x, index.y + 1);
                     if (IsColorMatch(targetIndex, color))
                     {
+                        cubes.Add(gridArray[index.x, index.y + 1]);
                         queue.Enqueue(targetIndex);
                     }
                     else
@@ -269,7 +271,14 @@ namespace ToonBlast
             }
 
             // Add origin index
-            cubes.Add(gridArray[index.x, index.y]);
+            if (!cubes.Contains(gridArray[index.x, index.y]))
+            {
+                cubes.Add(gridArray[index.x, index.y]);
+            }
+            else
+            {
+                Debug.LogWarning($"Self cube [{index.x} , {index.y}] is in list");
+            }
         }
 
         private bool IsColorMatch(CubeIndex index, int color)
