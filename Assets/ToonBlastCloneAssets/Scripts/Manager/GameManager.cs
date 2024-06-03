@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -29,6 +30,7 @@ namespace ToonBlast
         private void Start()
         {
             ChangeState(GameplayState.Idle);
+            DOTween.SetTweensCapacity(2000, 100);
         }
 
         private void Update()

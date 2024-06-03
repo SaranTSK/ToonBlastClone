@@ -18,7 +18,7 @@ namespace ToonBlast
 
         public virtual void Drop(Vector2 position, float time)
         {
-            transform.DOMove(position, time);
+            transform.DOMove(position, time).SetSpeedBased(true).onComplete = LevelManager.Instance.OnDropCompleted;
         }
     }
 }

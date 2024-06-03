@@ -531,7 +531,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8360570692825427287, guid: c95c2bfe9a7673241bc9d6ae1282f2fa, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8360570692825427287, guid: c95c2bfe9a7673241bc9d6ae1282f2fa, type: 3}
       propertyPath: m_LocalPosition.x
@@ -587,20 +587,12 @@ PrefabInstance:
       value: LevelManager
       objectReference: {fileID: 0}
     - target: {fileID: 9149465352445676252, guid: ca7fc1bd6730753499b39749998d1f21, type: 3}
-      propertyPath: dropTime
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149465352445676252, guid: ca7fc1bd6730753499b39749998d1f21, type: 3}
-      propertyPath: dropOffset.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149465352445676252, guid: ca7fc1bd6730753499b39749998d1f21, type: 3}
-      propertyPath: dropOffset.y
+      propertyPath: isSceneDrop
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9149465352445676253, guid: ca7fc1bd6730753499b39749998d1f21, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 9149465352445676253, guid: ca7fc1bd6730753499b39749998d1f21, type: 3}
       propertyPath: m_LocalPosition.x

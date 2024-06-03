@@ -29,6 +29,9 @@ namespace ToonBlast
 
         private Dictionary<string, Queue<GameObject>> poolDict;
 
+        public bool IsInit {  get => isInit; }
+        private bool isInit;
+
         private void Awake()
         {
             if(Instance == null)
@@ -59,6 +62,8 @@ namespace ToonBlast
 
                 poolDict.Add(pool.tag, objectPool);
             }
+
+            isInit = true;
         }
 
         private Pool GetPool(string tag) 

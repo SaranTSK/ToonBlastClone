@@ -54,4 +54,4 @@ MonoBehaviour:
   - {r: 0.3443396, g: 0.6821866, b: 1, a: 1}
   - {r: 1, g: 0.9642977, b: 0.4764151, a: 1}
   dropOffset: {x: 0, y: 0}
-  dropTime: 1
+  dropTime: 10
