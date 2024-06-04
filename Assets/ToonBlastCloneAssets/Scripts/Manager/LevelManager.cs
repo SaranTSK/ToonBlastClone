@@ -387,12 +387,12 @@ namespace ToonBlast
             {
                 for (int y = 0; y < gridSize.y; y++)
                 {
-                    CubePanel panel = gridArray[index.x, y];
+                    CubePanel panel = gridArray[x, y];
 
                     if (panel.GetCube() == null)
                         continue;
 
-                    if (IsColorMatch(new CubeIndex(x, y), color))
+                    if (panel.GetCube().IsNormalCube && IsColorMatch(new CubeIndex(x, y), color) || panel.IsEqualIndex(index))
                     {
                         gridArray[x, y].GetCube().Remove();
                     }
