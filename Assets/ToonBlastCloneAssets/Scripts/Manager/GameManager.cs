@@ -29,6 +29,7 @@ namespace ToonBlast
 
         private void Start()
         {
+            AudioManager.Instance.Play(Audio.BGM_Gameplay);
             ChangeState(GameplayState.Idle);
             DOTween.SetTweensCapacity(2000, 100);
         }

@@ -44,11 +44,6 @@ namespace ToonBlast
             StartCoroutine(EnumSpawnGrid());
         }
 
-        private void Update()
-        {
-
-        }
-
         public Color GetColor(int cubeColor)
         {
             return colors[cubeColor];
@@ -196,6 +191,8 @@ namespace ToonBlast
         private void DropCubes()
         {
             dropCount = dropCubes.Count;
+            AudioManager.Instance.PlayOneShot(Audio.SFX_Drop);
+
             foreach (CubePanel panel in dropCubes)
             {
                 panel.GetCube().Drop(panel.transform.position, dropTime);
@@ -241,6 +238,7 @@ namespace ToonBlast
 
                 CheckSpecialCubeSpawn(index, amount, color);
                 SpawnNormalCubesOnTop();
+                AudioManager.Instance.PlayOneShot(Audio.SFX_Pop);
             }
             else
             {
@@ -533,6 +531,8 @@ namespace ToonBlast
         private void StartCheckSpecialCube(CubeIndex index)
         {
             Debug.Log($"Start Collide Cube Count: {collideCubes.Count}");
+
+            AudioManager.Instance.PlayOneShot(Audio.SFX_Bomb);
 
             CubePanel panel = gridArray[index.x, index.y];
             if (!collideCubes.Contains(panel))
