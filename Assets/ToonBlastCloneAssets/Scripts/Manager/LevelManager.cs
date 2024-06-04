@@ -4,6 +4,14 @@ using UnityEngine;
 
 namespace ToonBlast
 {
+    public static class CollideCondition
+    {
+        public static int FireWorkCount = 4;
+        public static int BombCount = 5;
+        public static int CrossCount = 6;
+        public static int DiscoCount = 10;
+    }
+
     public class LevelManager : MonoBehaviour
     {
         public static LevelManager Instance;
@@ -150,6 +158,8 @@ namespace ToonBlast
                     cube.GetComponent<NormalCube>().Init(Random.Range(1, colors.Length));
                 }
             }
+
+            UpdateNormalCubeIcon();
         }
 
         private void SpawnNormalCubesOnTop()
@@ -188,6 +198,53 @@ namespace ToonBlast
             DropCubes();
         }
 
+        private void SpawnSpecialCube(string tag, CubeIndex index, int color = 0)
+        {
+            CubePanel panel = gridArray[index.x, index.y];
+            GameObject cube = ObjectPoolManager.Instance.SpawnFromPool(tag, panel.transform.position, Quaternion.identity, panel.transform);
+            cube.GetComponent<AbstractCube>().Init(color);
+        }
+        #endregion
+
+        #region Cube Update Icon
+        private void UpdateNormalCubeIcon()
+        {
+            List<CubePanel> updateCube = new List<CubePanel>();
+            for (int x = 0; x < gridSize.x; x++)
+            {
+                for (int y = 0; y < gridSize.y; y++)
+                {
+                    CubePanel panel = gridArray[x, y];
+
+                    if (updateCube.Contains(panel) || panel.GetCube().IsNormalCube == false)
+                        continue;
+
+                    collideCheckQueue.Enqueue(panel.Index);
+
+                    while (collideCheckQueue.Count > 0)
+                    {
+                        CubeIndex current = collideCheckQueue.Dequeue();
+                        CheckCollideCubes(current, panel.GetCube().CubeColor);
+                    }
+
+                    int amount = collideCubes.Count;
+                    foreach (CubePanel collidePanel in collideCubes)
+                    {
+                        if(collidePanel.GetCube().TryGetComponent(out NormalCube normalCube))
+                        {
+                            normalCube.SetCubeIcon(amount);
+                        }
+                    }
+
+                    updateCube.AddRange(collideCubes);
+                    collideCubes.Clear();
+                    collideCheckQueue.Clear();
+                }
+            }
+        }
+        #endregion
+
+        #region Cube Drop
         private void DropCubes()
         {
             dropCount = dropCubes.Count;
@@ -205,15 +262,9 @@ namespace ToonBlast
             if (dropCount == 0)
             {
                 dropCubes.Clear();
+                UpdateNormalCubeIcon();
                 GameManager.Instance.ChangeState(GameplayState.Idle);
             }
-        }
-
-        private void SpawnSpecialCube(string tag, CubeIndex index, int color = 0)
-        {
-            CubePanel panel = gridArray[index.x, index.y];
-            GameObject cube = ObjectPoolManager.Instance.SpawnFromPool(tag, panel.transform.position, Quaternion.identity, panel.transform);
-            cube.GetComponent<AbstractCube>().Init(color);
         }
         #endregion
 
@@ -406,7 +457,6 @@ namespace ToonBlast
         {
             // Add origin index
             CubePanel panel = gridArray[index.x, index.y];
-            CubeIndex targetIndex = new CubeIndex();
 
             if (!collideCubes.Contains(panel))
             {
@@ -417,59 +467,39 @@ namespace ToonBlast
             if (index.x - 1 >= 0)
             {
                 panel = gridArray[index.x - 1, index.y];
-                if (!collideCubes.Contains(panel))
-                {
-                    targetIndex = new CubeIndex(index.x - 1, index.y);
-                    if (IsColorMatch(targetIndex, color) && panel.GetCube().IsNormalCube)
-                    {
-                        collideCubes.Add(panel);
-                        collideCheckQueue.Enqueue(targetIndex);
-                    }
-                }
+                AddCollideCube(panel, color);
             }
 
             // Check Right Cube
             if (index.x + 1 < gridSize.x)
             {
                 panel = gridArray[index.x + 1, index.y];
-                if (!collideCubes.Contains(panel))
-                {
-                    targetIndex = new CubeIndex(index.x + 1, index.y);
-                    if (IsColorMatch(targetIndex, color) && panel.GetCube().IsNormalCube)
-                    {
-                        collideCubes.Add(panel);
-                        collideCheckQueue.Enqueue(targetIndex);
-                    }
-                }
+                AddCollideCube(panel, color);
             }
 
             // Check Top Cube
             if (index.y - 1 >= 0)
             {
                 panel = gridArray[index.x, index.y - 1];
-                if (!collideCubes.Contains(panel))
-                {
-                    targetIndex = new CubeIndex(index.x, index.y - 1);
-                    if (IsColorMatch(targetIndex, color) && panel.GetCube().IsNormalCube)
-                    {
-                        collideCubes.Add(panel);
-                        collideCheckQueue.Enqueue(targetIndex);
-                    }
-                }
+                AddCollideCube(panel, color);
             }
 
             // Check Down Cube
             if (index.y + 1 < gridSize.y)
             {
                 panel = gridArray[index.x, index.y + 1];
-                if (!collideCubes.Contains(panel))
+                AddCollideCube(panel, color);
+            }
+        }
+
+        private void AddCollideCube(CubePanel panel, int color)
+        {
+            if (!collideCubes.Contains(panel))
+            {
+                if (IsColorMatch(panel.Index, color) && panel.GetCube().IsNormalCube)
                 {
-                    targetIndex = new CubeIndex(index.x, index.y + 1);
-                    if (IsColorMatch(targetIndex, color) && panel.GetCube().IsNormalCube)
-                    {
-                        collideCubes.Add(panel);
-                        collideCheckQueue.Enqueue(targetIndex);
-                    }
+                    collideCubes.Add(panel);
+                    collideCheckQueue.Enqueue(panel.Index);
                 }
             }
         }
@@ -496,29 +526,21 @@ namespace ToonBlast
             }
         }
 
-        private bool IsColorMatch(CubeIndex index, int color)
-        {
-            if(gridArray[index.x, index.y].GetCube() == null)
-                return false;
-
-            return gridArray[index.x, index.y].GetCube().CubeColor == color;
-        }
-
         private void CheckSpecialCubeSpawn(CubeIndex index, int amount, int color)
         {
-            if(amount >= 10)
+            if(amount >= CollideCondition.DiscoCount)
             {
                 SpawnSpecialCube(PoolTag.DiscoCube, index, color);
             }
-            else if (amount >= 6)
+            else if (amount >= CollideCondition.CrossCount)
             {
                 SpawnSpecialCube(PoolTag.CrossBombCube, index);
             }
-            else if(amount >= 5)
+            else if(amount >= CollideCondition.BombCount)
             {
                 SpawnSpecialCube(PoolTag.SqureBombCube, index);
             }
-            else if (amount >= 4)
+            else if (amount >= CollideCondition.FireWorkCount)
             {
                 int rand = Random.Range(0, 2);
                 if (rand == 0)
@@ -526,6 +548,18 @@ namespace ToonBlast
                 else
                     SpawnSpecialCube(PoolTag.HorizontalBombCube, index);
             }
+        }
+
+
+        #endregion
+
+        #region Utils
+        private bool IsColorMatch(CubeIndex index, int color)
+        {
+            if (gridArray[index.x, index.y].GetCube() == null)
+                return false;
+
+            return gridArray[index.x, index.y].GetCube().CubeColor == color;
         }
 
         private void StartCheckSpecialCube(CubeIndex index)
@@ -564,11 +598,11 @@ namespace ToonBlast
         {
             CubePanel panel = gridArray[index.x, index.y];
 
-            if(index.y > 0)
+            if (index.y > 0)
             {
                 for (int y = 0; y < index.y; y++)
                 {
-                    if(gridArray[index.x, y].GetCube() == null)
+                    if (gridArray[index.x, y].GetCube() == null)
                     {
                         panel = gridArray[index.x, y];
                         break;

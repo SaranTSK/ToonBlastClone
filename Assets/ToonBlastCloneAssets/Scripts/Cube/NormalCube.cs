@@ -4,10 +4,12 @@ using UnityEngine;
 
 namespace ToonBlast
 {
+    [System.Serializable]
     public class NormalCubeIcon
     {
         public Sprite FireworkIcon;
         public Sprite BombIcon;
+        public Sprite CrossIcon;
         public Sprite DiscoIcon;
     }
     public class NormalCube : AbstractCube
@@ -27,15 +29,20 @@ namespace ToonBlast
 
         public void SetCubeIcon(int amount)
         {
-            if (amount >= 10)
+            Debug.Log($"Set {name} icon: {amount}");
+            if (amount >= CollideCondition.DiscoCount)
             {
                 iconRenderer.sprite = iconSprites.DiscoIcon;
             }
-            else if (amount >= 6)
+            else if (amount >= CollideCondition.CrossCount)
+            {
+                iconRenderer.sprite = iconSprites.CrossIcon;
+            }
+            else if (amount >= CollideCondition.BombCount)
             {
                 iconRenderer.sprite = iconSprites.BombIcon;
             }
-            else if (amount >= 4)
+            else if (amount >= CollideCondition.FireWorkCount)
             {
                 iconRenderer.sprite = iconSprites.FireworkIcon;
             }
@@ -44,7 +51,7 @@ namespace ToonBlast
                 iconRenderer.sprite = null;
             }
 
-            iconRenderer.color = LevelManager.Instance.GetColor(cubeColor) - new Color(0.25f, 0.25f, 0.25f);
+            iconRenderer.color = LevelManager.Instance.GetColor(cubeColor) - new Color(0.25f, 0.25f, 0.25f, 0f);
         }
 
         public override void Click(CubeIndex index)
