@@ -216,11 +216,7 @@ namespace ToonBlast
         {
             CubePanel panel = gridArray[index.x, index.y];
             GameObject cube = ObjectPoolManager.Instance.SpawnFromPool(tag, panel.transform.position, Quaternion.identity, panel.transform);
-
-            if (tag == PoolTag.DiscoCube)
-            {
-                cube.GetComponent<DiscoCube>().Init(color);
-            }
+            cube.GetComponent<AbstractCube>().Init(color);
         }
         #endregion
 
@@ -547,6 +543,8 @@ namespace ToonBlast
 
         private void EndCheckSpecialCube(CubeIndex index)
         {
+            Debug.Log($"End Collide Cube Count: {collideCubes.Count}");
+
             collideCubes.Remove(gridArray[index.x, index.y]);
 
             while (collideCheckQueue.Count > 0)
@@ -556,7 +554,7 @@ namespace ToonBlast
                 panel.GetCube().Click(cubeIndex);
             }
 
-            if (collideCubes.Count == 0)
+            if (collideCubes.Count == 0 && GameManager.Instance.GameplayState == GameplayState.Check)
             {
                 SpawnNormalCubesOnTop();
             }

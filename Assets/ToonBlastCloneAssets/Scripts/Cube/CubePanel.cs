@@ -48,10 +48,5 @@ namespace ToonBlast
         {
             return this.index.x == index.x && this.index.y == index.y;
         }
-
-        private IEnumerator EnumDelayClick()
-        {
-            yield return new WaitForSecondsRealtime(0.1f);
-        }
     }
 }
