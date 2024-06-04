@@ -36,7 +36,8 @@ namespace ToonBlast
         {
             this.gridSize = gridSize;
 
-            float desirSize = Mathf.Max(gridSize.x, gridSize.y / 2f) + 0.5f;
+            int yOffset = (gridSize.y - gridSize.x > 4) ? (gridSize.y - gridSize.x) / 2 : 0;
+            float desirSize = Mathf.Max(gridSize.x, gridSize.y / 2f) + 0.5f + yOffset;
             mainCamera.orthographicSize = desirSize * screenSize.y / screenSize.x * 0.5f;
         }
 

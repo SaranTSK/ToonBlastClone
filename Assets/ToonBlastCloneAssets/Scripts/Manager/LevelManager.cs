@@ -54,11 +54,21 @@ namespace ToonBlast
             return colors[cubeColor];
         }
 
+        public void GenerateGrid(Vector2Int gridSize)
+        {
+            this.gridSize = gridSize;
+
+            ResetGrid();
+            CameraManager.Instance.ZoomCameraFollowGridSize(gridSize);
+        }
+
         private IEnumerator EnumSpawnGrid()
         {
             yield return new WaitUntil(() => ObjectPoolManager.Instance.IsInit);
 
             SpawnGrid();
+            SettingPanel.Instance.Init(gridSize);
+            CameraManager.Instance.ZoomCameraFollowGridSize(gridSize);
         }
 
         private void SpawnGrid()
@@ -99,8 +109,10 @@ namespace ToonBlast
                 center.y += overlap.y / 2;
             }
 
+            center.y += (gridSize.y > gridSize.x) ? (gridSize.y - gridSize.x) / 2f : 0;
+            center.y -= (gridSize.y - gridSize.x > 4) ? (gridSize.y - gridSize.x) / 4f : 0;
+
             transform.position = center;
-            CameraManager.Instance.ZoomCameraFollowGridSize(gridSize);
             SpawnNormalCubes();
         }
 
@@ -117,6 +129,18 @@ namespace ToonBlast
             GameManager.Instance.ChangeState(GameplayState.Idle);
 
             SpawnNormalCubes();
+        }
+
+        private void ResetGrid()
+        {
+            foreach (Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+
+            transform.position = Vector3.zero;
+
+            SpawnGrid();
         }
 
         #region Cube Spawning
@@ -367,6 +391,11 @@ namespace ToonBlast
             {
                 for (int y = 0; y < gridSize.y; y++)
                 {
+                    CubePanel panel = gridArray[index.x, y];
+
+                    if (panel.GetCube() == null)
+                        continue;
+
                     if (IsColorMatch(new CubeIndex(x, y), color))
                     {
                         gridArray[x, y].GetCube().Remove();

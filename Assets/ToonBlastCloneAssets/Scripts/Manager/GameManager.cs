@@ -35,7 +35,7 @@ namespace ToonBlast
 
         private void Update()
         {
-            UpdateMouseInput();
+            UpdateInput();
         }
 
         public void ChangeState(GameplayState gameplayState)
@@ -44,7 +44,7 @@ namespace ToonBlast
             this.gameplayState = gameplayState;
         }
 
-        private void UpdateMouseInput()
+        private void UpdateInput()
         {
             if(Input.GetMouseButtonDown(0))
             {
@@ -54,6 +54,11 @@ namespace ToonBlast
             if (Input.GetKeyDown(KeyCode.R))
             {
                 LevelManager.Instance.ResetCubes();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Application.Quit();
             }
         }
 

@@ -46,7 +46,7 @@ MonoBehaviour:
   pools:
   - tag: NormalCube
     prefab: {fileID: 1224317946294091711, guid: 08e16a0797bf5ac4781d95f5d8308152, type: 3}
-    size: 50
+    size: 100
   - tag: VerticalBombCube
     prefab: {fileID: 9187236730269009191, guid: fe38cb30abebce24b986a42d2703d0a3, type: 3}
     size: 10

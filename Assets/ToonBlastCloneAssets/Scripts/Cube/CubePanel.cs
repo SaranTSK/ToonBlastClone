@@ -29,7 +29,7 @@ namespace ToonBlast
         public void Click()
         {
             Debug.Log($"Click on: {name}");
-            if (GetCube() == null)
+            if (GetCube() == null || GameManager.Instance.GameplayState != GameplayState.Idle)
                 return;
 
             GameManager.Instance.ChangeState(GameplayState.Check);
@@ -47,6 +47,11 @@ namespace ToonBlast
         public bool IsEqualIndex(CubeIndex index) 
         {
             return this.index.x == index.x && this.index.y == index.y;
+        }
+
+        private IEnumerator EnumDelayClick()
+        {
+            yield return new WaitForSecondsRealtime(0.1f);
         }
     }
 }
