@@ -10,6 +10,7 @@ namespace ToonBlast
         public static string VerticalBombCube = "VerticalBombCube";
         public static string HorizontalBombCube = "HorizontalBombCube";
         public static string SqureBombCube = "SqureBombCube";
+        public static string CrossBombCube = "CrossBombCube";
         public static string DiscoCube = "DiscoCube";
     }
 

@@ -56,6 +56,9 @@ MonoBehaviour:
   - tag: SqureBombCube
     prefab: {fileID: 6849038657337974785, guid: ff2c1dbfe08bfc040b26de911ccb809a, type: 3}
     size: 5
+  - tag: CrossBombCube
+    prefab: {fileID: 6681584879283232733, guid: 20ab9c3c4f6d949a1971d241c5c1bee2, type: 3}
+    size: 5
   - tag: DiscoCube
     prefab: {fileID: 6681584879283232733, guid: 17f94521686a22148b8c2dce55406ad5, type: 3}
     size: 5

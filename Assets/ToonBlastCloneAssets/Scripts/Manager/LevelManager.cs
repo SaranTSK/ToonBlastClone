@@ -8,8 +8,8 @@ namespace ToonBlast
     {
         public static LevelManager Instance;
 
-        public Vector2Int GridSize {  get => gridSize; }
-        public int Row {  get => gridSize.x; }
+        public Vector2Int GridSize { get => gridSize; }
+        public int Row { get => gridSize.x; }
         public int Column { get => gridSize.y; }
 
         [Header("Grid Setting")]
@@ -39,14 +39,14 @@ namespace ToonBlast
             }
         }
 
-        private void Start() 
+        private void Start()
         {
             StartCoroutine(EnumSpawnGrid());
         }
 
         private void Update()
         {
-            
+
         }
 
         public Color GetColor(int cubeColor)
@@ -83,7 +83,7 @@ namespace ToonBlast
                         position.x += overlap.x * x;
                         position.y += overlap.y * y;
                     }
-                    
+
                     GameObject go = Instantiate(panelPrefab, position, Quaternion.identity, transform);
                     go.name = $"Panel({x},{y})";
                     go.GetComponent<CubePanel>().Init(new CubeIndex(x, y));
@@ -106,10 +106,10 @@ namespace ToonBlast
 
         public void ResetCubes()
         {
-            foreach(Transform child in transform)
+            foreach (Transform child in transform)
             {
                 AbstractCube cube = child.GetComponent<CubePanel>().GetCube();
-                if(cube != null)
+                if (cube != null)
                 {
                     cube.Remove();
                 }
@@ -139,7 +139,7 @@ namespace ToonBlast
 
             CheckDropCubes();
 
-            if(isSceneDrop)
+            if (isSceneDrop)
             {
                 Camera camera = CameraManager.Instance.MainCamera;
                 Vector2 scenePos = camera.ScreenToWorldPoint(new Vector2(Screen.width / 2f, Screen.height));
@@ -153,7 +153,7 @@ namespace ToonBlast
                 for (int y = 0; y < gridSize.y; y++)
                 {
                     CubePanel panel = gridArray[x, y];
-                    if(panel.GetCube() == null)
+                    if (panel.GetCube() == null)
                     {
                         if (!dropCubes.Contains(panel))
                             dropCubes.Add(panel);
@@ -235,7 +235,7 @@ namespace ToonBlast
         {
             StartCheckSpecialCube(index);
 
-            for(int y = 0; y < gridSize.y; y++)
+            for (int y = 0; y < gridSize.y; y++)
             {
                 CubePanel panel = gridArray[index.x, y];
 
@@ -305,9 +305,54 @@ namespace ToonBlast
                     }
                     else
                     {
-                        if(!collideCheckQueue.Contains(new CubeIndex(x, y)))
+                        if (!collideCheckQueue.Contains(new CubeIndex(x, y)))
                             collideCheckQueue.Enqueue(new CubeIndex(x, y));
                     }
+                }
+            }
+
+            EndCheckSpecialCube(index);
+        }
+
+        public void ClickCrossBombCube(CubeIndex index)
+        {
+            StartCheckSpecialCube(index);
+
+            // Remove horizontal
+            for (int x = 0; x < gridSize.x; x++)
+            {
+                CubePanel panel = gridArray[x, index.y];
+
+                if (panel.GetCube() == null)
+                    continue;
+
+                if (panel.GetCube().IsNormalCube || panel.IsEqualIndex(index))
+                {
+                    panel.GetCube().Remove();
+                }
+                else
+                {
+                    if (!collideCheckQueue.Contains(new CubeIndex(x, index.y)))
+                        collideCheckQueue.Enqueue(new CubeIndex(x, index.y));
+                }
+            }
+
+            // Remove vertical
+            for (int y = 0; y < gridSize.y; y++)
+            {
+                CubePanel panel = gridArray[index.x, y];
+
+                if (panel.GetCube() == null)
+                    continue;
+
+                if (panel.GetCube().IsNormalCube || panel.IsEqualIndex(index))
+                {
+                    panel.GetCube().Remove();
+                }
+                else
+                {
+                    if (!collideCheckQueue.Contains(new CubeIndex(index.x, y)))
+                        collideCheckQueue.Enqueue(new CubeIndex(index.x, y));
                 }
             }
 
@@ -442,7 +487,11 @@ namespace ToonBlast
             {
                 SpawnSpecialCube(PoolTag.DiscoCube, index, color);
             }
-            else if(amount >= 6)
+            else if (amount >= 6)
+            {
+                SpawnSpecialCube(PoolTag.CrossBombCube, index);
+            }
+            else if(amount >= 5)
             {
                 SpawnSpecialCube(PoolTag.SqureBombCube, index);
             }
