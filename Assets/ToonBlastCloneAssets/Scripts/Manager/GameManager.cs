@@ -41,7 +41,6 @@ namespace ToonBlast
 
         public void ChangeState(GameplayState gameplayState)
         {
-            Debug.Log($"Change state from [{this.gameplayState}] to [{gameplayState}]");
             this.gameplayState = gameplayState;
         }
 

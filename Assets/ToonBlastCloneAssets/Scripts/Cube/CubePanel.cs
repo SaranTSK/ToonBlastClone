@@ -28,7 +28,6 @@ namespace ToonBlast
 
         public void Click()
         {
-            Debug.Log($"Click on: {name}");
             if (GetCube() == null || GameManager.Instance.GameplayState != GameplayState.Idle)
                 return;
 

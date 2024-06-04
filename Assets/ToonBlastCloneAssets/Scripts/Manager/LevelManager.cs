@@ -76,7 +76,6 @@ namespace ToonBlast
 
         private void SpawnGrid()
         {
-            Debug.Log($"Row: {gridSize.x} | Column: {gridSize.y}");
             gridArray = new CubePanel[gridSize.x, gridSize.y];
 
             SpriteRenderer sr = panelPrefab.GetComponent<SpriteRenderer>();
@@ -564,8 +563,6 @@ namespace ToonBlast
 
         private void StartCheckSpecialCube(CubeIndex index)
         {
-            Debug.Log($"Start Collide Cube Count: {collideCubes.Count}");
-
             AudioManager.Instance.PlayOneShot(Audio.SFX_Bomb);
 
             CubePanel panel = gridArray[index.x, index.y];
@@ -577,8 +574,6 @@ namespace ToonBlast
 
         private void EndCheckSpecialCube(CubeIndex index)
         {
-            Debug.Log($"End Collide Cube Count: {collideCubes.Count}");
-
             collideCubes.Remove(gridArray[index.x, index.y]);
 
             while (collideCheckQueue.Count > 0)

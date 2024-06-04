@@ -29,7 +29,6 @@ namespace ToonBlast
 
         public void SetCubeIcon(int amount)
         {
-            Debug.Log($"Set {name} icon: {amount}");
             if (amount >= CollideCondition.DiscoCount)
             {
                 iconRenderer.sprite = iconSprites.DiscoIcon;
