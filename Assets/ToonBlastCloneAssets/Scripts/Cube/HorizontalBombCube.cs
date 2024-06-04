@@ -19,6 +19,7 @@ namespace ToonBlast
 
         public override void Remove()
         {
+            EffectManager.Instance.SpawnEffect(Effect.ExplodeVFX, transform.position, transform.rotation);
             ObjectPoolManager.Instance.ReturnToPool(PoolTag.HorizontalBombCube, gameObject);
         }
     }

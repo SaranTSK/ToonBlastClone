@@ -44,3 +44,6 @@ TagManager:
   - name: Cube
     uniqueID: 1016171899
     locked: 0
+  - name: Effect
+    uniqueID: 3825062953
+    locked: 0
